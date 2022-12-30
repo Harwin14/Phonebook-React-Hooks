@@ -19,8 +19,8 @@ const loadContactFailure = () => ({
 
 export const loadContact = () => (dispatch, getState) => request.get('users', { params: getState().contacts.params })
   .then(({ data }) => {
-    // console.log(getState())
-    dispatch(loadContactSuccess(data.data.result, data.data.page, data.data.totalPages))
+    // console.log(getState(), 'wkwkwk')
+    dispatch(loadContactSuccess(data.data.contacts, data.data.page, data.data.totalPages))
   }).catch((err) => {
     dispatch(loadContactFailure())
   })
@@ -30,25 +30,25 @@ const loadMoreSuccess = (data) => ({
   data
 })
 
-const loadMoreFailure = () => ({
-  type: 'LOAD_MORE_FAILURE'
-})
+// const loadMoreFailure = () => ({
+//   type: 'LOAD_MORE_FAILURE'
+// })
 
 
 export const loadMore = () => (dispatch, getState) => {
   let state = getState()
+  // console.log(getState(),'ini isi getstate')
   if (state.contacts.params.page < state.contacts.params.totalPages) {
     let params = {
       ...state.contacts.params,
       page: state.contacts.params.page + 1
     }
     request.get('users', { params }).then(({ data }) => {
-      console.log({data})
       params = {
         ...params,
         totalPages: data.data.totalPages
       }
-      dispatch(loadMoreSuccess({ value: data.data.result, params }))
+      dispatch(loadMoreSuccess({ value: data.data.contacts, params }))
     })
   }
 };
@@ -73,31 +73,43 @@ export const addContactRedux = (id, name, phone) => ({
 })
 // hasil dari { data } sama dengan response ?
 // console log dimana?
-export const addContact = (name, phone) => dispatch => {
+// export const addContact = (name, phone) => dispatch => {
+//   const id = Date.now()
+//   dispatch(addContactRedux(id, name, phone))
+//   return request.post('users', { name, phone })
+//     .then(({ data }) => {
+//       dispatch(addContactSuccess(id, data.data))
+//     }).catch((err) => {
+//       dispatch(addContactFailure(id))
+//     })
+// }
+export const addContact = (name, phone) => async dispatch => {
   const id = Date.now()
-  dispatch(addContactRedux(id, name, phone))
-  return request.post('users', { name, phone })
-    .then(({ data }) => {
-      dispatch(addContactSuccess(id, data.data))
-    }).catch((err) => {
-      dispatch(addContactFailure(id))
-    })
+ 
+  try {
+    await dispatch(addContactRedux(id, name, phone))
+    const { data } = await request.post('users', { name, phone })
+     console.log('ini add', data)
+     if ( data.success){
+      dispatch(addContactSuccess(id,data.data))
+     }
+  } catch (error) {
+    dispatch(addContactFailure(id))
+  }
+
+  // export const addContact = (name, phone) => async dispatch => {
+  //     const id = Date.now()
+
+  //     dispatch(addContactRedux(id, name, phone))
+  //     try {
+  //       const { data } = await request.post('users', { name, phone })
+  //       // console.log('ini add', data)
+  //       dispatch(addContactSuccess(id, data.data))
+  //     } catch (error) {
+  //       dispatch(addContactFailure(id))
+  //     }
 }
 
-
-// export const addContact = (name, phone) => {
-//   return async dispatch => {
-//     const id = Date.now()
-//     dispatch(addContactRedux(id, name, phone))
-//     try {
-//       const { data } = await request.post('users', { name, phone })
-//       console.log('ini add', data)
-//       return dispatch(addContactSuccess(id, data.data))
-//     } catch (error) {
-//       return dispatch(addContactFailure(id))
-//     }
-//   }
-// }
 
 const removeContactSuccess = (id) => ({
   type: 'REMOVE_CONTACT_SUCCESS',
@@ -166,9 +178,9 @@ const searchContactSuccess = (data) => ({
   data
 })
 
-const searchContactFailure = () => ({
-  type: 'SEARCH_CONTACT_FAILURE'
-})
+// const searchContactFailure = () => ({
+//   type: 'SEARCH_CONTACT_FAILURE'
+// })
 
 // export const searchContact = (query) => (dispatch) => request.get('users')
 //   .then(({ data }) => {
@@ -189,22 +201,22 @@ export const searchContacts = (query) => (dispatch, getState) => {
       ...params,
       totalPages: data.data.totalPages
     }
-    dispatch(searchContactSuccess({ value: data.data.result, params }))
+    dispatch(searchContactSuccess({ value: data.data.contacts, params }))
   })
 }
-export const searchContact= (query) => (dispatch, getState) => {
+export const searchContact = (query) => (dispatch, getState) => {
   let state = getState()
   let params = {
-      ...state.contacts.params,
-      ...query,
-      page: 1
+    ...state.contacts.params,
+    ...query,
+    page: 1
   }
   request.get('users', { params }).then(({ data }) => {
-      params = {
-          ...params,
-          totalPage: data.data.totalPage
-      }
-      dispatch(searchContactSuccess({ value: data.data.result, params }))
+    params = {
+      ...params,
+      totalPage: data.data.totalPage
+    }
+    dispatch(searchContactSuccess({ value: data.data.contacts, params }))
   })
 }
 

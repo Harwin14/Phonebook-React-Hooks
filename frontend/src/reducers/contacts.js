@@ -22,7 +22,7 @@ const contacts = (state = {
                 }
             }
         case 'LOAD_MORE_SUCCESS':
-           // console.log(state, "state load more")
+            // console.log(state, "state load more")
             return {
                 data: [...state.data, ...action.data.value.map(item => {
                     item.sent = true
