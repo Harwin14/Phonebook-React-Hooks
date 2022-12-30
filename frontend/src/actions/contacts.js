@@ -95,7 +95,7 @@ export const addContact = (name, phone) => async dispatch => {
      }
   } catch (error) {
     dispatch(addContactFailure(id)) 
-  } 
+  }  
 
   // export const addContact = (name, phone) => async dispatch => {
   //     const id = Date.now()
