@@ -94,8 +94,8 @@ export const addContact = (name, phone) => async dispatch => {
       dispatch(addContactSuccess(id,data.data))
      }
   } catch (error) {
-    dispatch(addContactFailure(id))
-  }
+    dispatch(addContactFailure(id)) 
+  } 
 
   // export const addContact = (name, phone) => async dispatch => {
   //     const id = Date.now()
