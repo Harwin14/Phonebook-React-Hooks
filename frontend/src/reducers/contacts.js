@@ -134,6 +134,6 @@ const contacts = (state = {
     }
 }
 
-export default contacts
+export default contacts 
   
    
