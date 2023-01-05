@@ -75,7 +75,7 @@ export const loadMore = () => {
         const { data } = await request.get('users', { params })
         params = {
           ...params,
-          pages: data.data.totalPages
+          totalPages: data.data.totalPages
         }
         dispatch(loadMoreSuccess({ value: data.data.contacts, params }))
       }
